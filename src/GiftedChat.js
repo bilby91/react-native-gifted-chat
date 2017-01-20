@@ -68,7 +68,7 @@ class GiftedChat extends React.Component {
 
     this.invertibleScrollViewProps = {
       inverted: true,
-      keyboardShouldPersistTaps: 'always',
+      keyboardShouldPersistTaps: true,
       onTouchStart: this.onTouchStart,
       onTouchMove: this.onTouchMove,
       onTouchEnd: this.onTouchEnd,
@@ -210,7 +210,7 @@ class GiftedChat extends React.Component {
     this.setIsTypingDisabled(true);
     this.setKeyboardHeight(e.endCoordinates ? e.endCoordinates.height : e.end.height);
     this.setBottomOffset(this.props.bottomOffset);
-    const newMessagesContainerHeight = (this.getMaxHeight() - (this.state.composerHeight + (this.getMinInputToolbarHeight() - MIN_COMPOSER_HEIGHT))) - this.getKeyboardHeight() + this.getBottomOffset();
+    const newMessagesContainerHeight = (this.getMaxHeight() - (this.state.composerHeight + (this.getMinInputToolbarHeight() - MIN_COMPOSER_HEIGHT))) - this.getKeyboardHeight();
     if (this.props.isAnimated === true) {
       Animated.timing(this.state.messagesContainerHeight, {
         toValue: newMessagesContainerHeight,
@@ -337,7 +337,7 @@ class GiftedChat extends React.Component {
       return {
         text: '',
         composerHeight: MIN_COMPOSER_HEIGHT,
-        messagesContainerHeight: this.prepareMessagesContainerHeight(this.getMaxHeight() - this.getMinInputToolbarHeight() - this.getKeyboardHeight() + this.getBottomOffset()),
+        messagesContainerHeight: this.prepareMessagesContainerHeight(this.getMaxHeight() - this.getMinInputToolbarHeight() - this.getKeyboardHeight()),
       };
     });
   }
@@ -347,6 +347,10 @@ class GiftedChat extends React.Component {
   }
 
   onType(e) {
+    if (this.props.onType) {
+      this.props.onType();
+    }
+
     if (this.getIsTypingDisabled() === true) {
       return;
     }
@@ -358,7 +362,7 @@ class GiftedChat extends React.Component {
       newComposerHeight = MIN_COMPOSER_HEIGHT;
     }
 
-    const newMessagesContainerHeight = this.getMaxHeight() - this.calculateInputToolbarHeight(newComposerHeight) - this.getKeyboardHeight() + this.getBottomOffset();
+    const newMessagesContainerHeight = this.getMaxHeight() - this.calculateInputToolbarHeight(newComposerHeight) - this.getKeyboardHeight();
     const newText = e.nativeEvent.text;
     this.setState((previousState) => {
       return {
@@ -503,6 +507,7 @@ GiftedChat.defaultProps = {
 GiftedChat.propTypes = {
   messages: React.PropTypes.array,
   onSend: React.PropTypes.func,
+  onType: React.PropTypes.func,
   loadEarlier: React.PropTypes.bool,
   onLoadEarlier: React.PropTypes.func,
   locale: React.PropTypes.string,
